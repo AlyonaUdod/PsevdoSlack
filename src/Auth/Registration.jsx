@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import firebase from '../firebase';
 import {NavLink} from 'react-router-dom'
 import {Grid, Form, Segment, Button, Header, Message, Icon} from 'semantic-ui-react'
+import md5 from 'md5'
 
 export default class Registration extends Component {
 
@@ -11,6 +12,7 @@ export default class Registration extends Component {
     password: '',
     passwordConfirm: '',
     errors: [],
+    usersRef: firebase.database().ref('users')
   }
 
   handlerChange = (e) => {
@@ -27,8 +29,22 @@ export default class Registration extends Component {
       firebase
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(createUser => {
-        console.log(createUser)
+      .then(createdUser => {
+        console.log(createdUser)
+        createdUser.user.updateProfile({
+          displayName: this.state.username,
+          photoURL:`http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+        })
+        .then(() => {
+          this.saveUser(createdUser)
+          .then(() => console.log('user saved'))
+          .catch(err => {
+            console.error(err)
+            this.setState({
+              errors: this.state.errors.concat(err)
+            })
+          })
+        })
       })
       .catch(err => {
         console.error(err)
@@ -37,6 +53,13 @@ export default class Registration extends Component {
         })
       })
     } 
+  }
+
+  saveUser = createdUser => {
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL,
+    })
   }
 
   isFormEmpty =({username, email, password, passwordConfirm}) => {
