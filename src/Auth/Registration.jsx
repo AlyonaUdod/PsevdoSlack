@@ -10,6 +10,7 @@ export default class Registration extends Component {
     email: '',
     password: '',
     passwordConfirm: '',
+    errors: [],
   }
 
   handlerChange = (e) => {
@@ -33,6 +34,44 @@ export default class Registration extends Component {
     })
   }
 
+  isFormEmpty =({username, email, password, passwordConfirm}) => {
+    return username && email && password && passwordConfirm
+  }
+
+  isPasswordValid = ({password, passwordConfirm}) => {
+    return password === passwordConfirm
+  }
+
+  isFormValid = () => {
+    let errors = [];
+    let error;
+    if (!this.isFormEmpty(this.state)) {
+      error = {
+        message: 'Fill in all fields'
+      };
+      this.setState({
+        errors: errors.concat(error)
+      })
+      console.log(false)
+      return false
+    } else if (!this.isPasswordValid(this.state)){
+      error = {
+        message: 'Password is invalid'
+      };
+      this.setState({
+        errors: errors.concat(error)
+      })
+      console.log(false)
+      return false
+    } else {
+      this.setState({
+        errors: []
+      })
+      console.log(true)
+      return true;
+    }
+  }
+
   render() {
     return (
         <Grid textAlign='center' verticalAlign='middle' className='app'>
@@ -43,7 +82,7 @@ export default class Registration extends Component {
             <Icon name='comment alternate' color='purple'/>
             Register for VsevdoSlack
           </Header>
-          <Form size='large' onSubmit={this.handlerSubmit}>
+          <Form size='large' onSubmit={this.isFormValid}>
             <Segment stacked>
               <Form.Input 
                 fluid
@@ -86,6 +125,12 @@ export default class Registration extends Component {
               </Button>
             </Segment>
           </Form>
+          {this.state.errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.state.errors.map(el => <p key={el.message}>{el.message}</p>)}
+            </Message>
+          )}
             <Message>
               Already a user? 
               <NavLink to='/login'>&nbsp;Login</NavLink>
