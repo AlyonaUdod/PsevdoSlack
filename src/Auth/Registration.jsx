@@ -23,15 +23,20 @@ export default class Registration extends Component {
 
   handlerSubmit = (e) => {
     e.preventDefault()
-    firebase
-    .auth()
-    .createUserWithEmailAndPassword(this.state.email, this.state.password)
-    .then(createUser => {
-      console.log(createUser)
-    })
-    .catch(err => {
-      console.error(err)
-    })
+    if (this.isFormValid()) {
+      firebase
+      .auth()
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then(createUser => {
+        console.log(createUser)
+      })
+      .catch(err => {
+        console.error(err)
+        this.setState({
+          errors: this.state.errors.concat(err)
+        })
+      })
+    } 
   }
 
   isFormEmpty =({username, email, password, passwordConfirm}) => {
@@ -72,6 +77,10 @@ export default class Registration extends Component {
     }
   }
 
+  handleInput = (errors, inputName) => {
+    return errors.some(el => el.message.toLowerCase().includes(inputName)) ? 'error' : ''
+  }
+
   render() {
     return (
         <Grid textAlign='center' verticalAlign='middle' className='app'>
@@ -80,9 +89,9 @@ export default class Registration extends Component {
           }}>
           <Header as='h2' icon color='purple' textAlign='center'>
             <Icon name='comment alternate' color='purple'/>
-            Register for VsevdoSlack
+            Register for PsevdoSlack
           </Header>
-          <Form size='large' onSubmit={this.isFormValid}>
+          <Form size='large' onSubmit={this.handlerSubmit}>
             <Segment stacked>
               <Form.Input 
                 fluid
@@ -92,7 +101,8 @@ export default class Registration extends Component {
                 placeholder="Username"
                 type='text'
                 onChange={this.handlerChange}
-                value={this.state.name}/>
+                value={this.state.name}
+                className={this.handleInput(this.state.errors, 'username')}/>
               <Form.Input 
                 fluid
                 name='email'
@@ -101,7 +111,8 @@ export default class Registration extends Component {
                 placeholder="Email"
                 type='email'
                 onChange={this.handlerChange}
-                value={this.state.email}/>
+                value={this.state.email}
+                className={this.handleInput(this.state.errors, 'email')}/>
               <Form.Input 
                 fluid
                 name='password'
@@ -110,7 +121,8 @@ export default class Registration extends Component {
                 placeholder="Password"
                 type='password'
                 onChange={this.handlerChange}
-                value={this.state.password}/>
+                value={this.state.password}
+                className={this.handleInput(this.state.errors, 'password')}/>
               <Form.Input 
                 fluid
                 name='passwordConfirm'
@@ -119,7 +131,8 @@ export default class Registration extends Component {
                 placeholder="Password Confirm"
                 type='password'
                 onChange={this.handlerChange}
-                value={this.state.passwordConfirm}/> 
+                value={this.state.passwordConfirm}
+                className={this.handleInput(this.state.errors, 'password')}/> 
               <Button color='purple' fluid size='large'>
                 Submit
               </Button>
