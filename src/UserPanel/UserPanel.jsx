@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Grid, Header, Icon, Dropdown } from 'semantic-ui-react';
+import { Grid, Header, Icon, Dropdown, Image } from 'semantic-ui-react';
 import firebase from '../firebase'
+import {connect} from 'react-redux'
 
 
-export default class UserPanel extends Component {
+class UserPanel extends Component {
 
     dropdownOptions = () => [
         {
@@ -29,8 +30,11 @@ export default class UserPanel extends Component {
             console.log('sign out')
         })
     }
+
     
+
   render() {
+    console.log(this.props.user)
     return (
         <Grid style={{
             background: '4c3c4c'
@@ -47,8 +51,10 @@ export default class UserPanel extends Component {
                 </Header>
                 </Grid.Row>
                 <Header style={{padding:'0.25rem'}} as='h4' inverted>
-                    <Dropdown trigger={
-                        <span>User</span>
+                    <Dropdown trigger={   
+                        <span style={{marginLeft: '1.1rem'}}> 
+                        <Image src={this.props.user.currentUser.photoURL} spased='right' style={{boxSizing:'border-box', marginRight: '.7rem'}} avatar/>
+                        {this.props.user.currentUser.displayName}</span>
                     } options={this.dropdownOptions()}/>
                 </Header>
             </Grid.Column>
@@ -57,3 +63,12 @@ export default class UserPanel extends Component {
     )
   }
 }
+
+function MSTP (state) {
+    return {
+      user: state.user,
+    }
+  }
+
+
+  export default connect(MSTP, null)(UserPanel)

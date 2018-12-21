@@ -66,6 +66,10 @@ export default class Registration extends Component {
     return username && email && password && passwordConfirm
   }
 
+  isPasswordValid =({password, passwordConfirm }) => {
+    return password === passwordConfirm
+  }
+
   isFormValid = () => {
     let errors = [];
     let error;
