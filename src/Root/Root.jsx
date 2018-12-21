@@ -8,8 +8,6 @@ import {connect} from 'react-redux'
 import {setUser} from '../redux/actions/setUserAction'
 import Spinner from '../Spinner/Spinner.jsx';
 
-
-
  class Root extends Component {
 
   componentDidMount(){
