@@ -5,7 +5,7 @@ import Login from '../Auth/Login'
 import Registration from '../Auth/Registration'
 import firebase from '../firebase'
 import {connect} from 'react-redux'
-import {setUser} from '../redux/actions/setUserAction'
+import {setUser, clearUser} from '../redux/actions/setUserAction'
 import Spinner from '../Spinner/Spinner.jsx';
 
  class Root extends Component {
@@ -16,6 +16,9 @@ import Spinner from '../Spinner/Spinner.jsx';
         console.log(user);
         this.props.setUser(user);
         this.props.history.push('/')
+      } else {
+        this.props.history.push('/login')
+        this.props.clearUser()
       }
     })
   }
@@ -42,6 +45,9 @@ function MDTP (dispatch) {
   return {
     setUser: function(user) {
       dispatch(setUser(user))
+    },
+    clearUser: function() {
+      dispatch(clearUser())
     }
   }
 }
