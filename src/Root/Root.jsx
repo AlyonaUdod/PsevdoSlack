@@ -1,11 +1,22 @@
 import React, { Component } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, withRouter } from 'react-router-dom'
 import App from '../App.js'
 import Login from '../Auth/Login'
 import Registration from '../Auth/Registration'
+import firebase from '../firebase'
 
 
-export default class Root extends Component {
+ class Root extends Component {
+
+  componentDidMount(){
+    firebase.auth().onAuthStateChanged(user => {
+      if(user) {
+        console.log(user);
+        this.props.history.push('/')
+      }
+    })
+  }
+
   render() {
     return (
       <div>
@@ -18,3 +29,7 @@ export default class Root extends Component {
     )
   }
 }
+
+export default withRouter(Root)
+
+// withRouter - HOC, принимает аргуементом компонент и дает доступ к истории браузера этого объекта.
