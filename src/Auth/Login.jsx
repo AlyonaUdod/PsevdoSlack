@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Grid, Form, Segment, Button, Header, Message, Icon} from 'semantic-ui-react'
 import {NavLink} from 'react-router-dom'
+import firebase from '../firebase'
 
 export default class Login extends Component {
 
@@ -16,8 +17,51 @@ export default class Login extends Component {
     })
   }
 
+  handlerSubmit = (e) => {
+    e.preventDefault()
+    if (this.isFormValid()) {
+      firebase
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(signedInUser => {
+        console.log(signedInUser) 
+        })
+      .catch(err => {
+        console.error(err)
+        this.setState({
+          errors: this.state.errors.concat(err),
+        })
+      })
+    } 
+  }
+
   isFormEmpty =({email, password}) => {
     return email && password
+  }
+
+  isFormValid = () => {
+    let errors = [];
+    let error;
+    if (!this.isFormEmpty(this.state)) {
+      error = {
+        message: 'Fill in all fields'
+      };
+      this.setState({
+        errors: errors.concat(error)
+      })
+      console.log(false)
+      return false
+    } else {
+      this.setState({
+        errors: []
+      })
+      console.log(true)
+      return true;
+    }
+  }
+
+  handleInput = (errors, inputName) => {
+    return errors.some(el => el.message.toLowerCase().includes(inputName)) ? 'error' : ''
   }
 
 
@@ -41,6 +85,8 @@ export default class Login extends Component {
             placeholder="Email"
             type='email'
             onChange={this.handlerChange}
+            value={this.state.name}
+            className={this.handleInput(this.state.errors, 'email')}
             />
           <Form.Input 
             fluid
@@ -50,6 +96,8 @@ export default class Login extends Component {
             placeholder="Password"
             type='password'
             onChange={this.handlerChange}
+            value={this.state.password}
+            className={this.handleInput(this.state.errors, 'password')}
             />
           <Button color='purple' fluid size='large'>
             Log In
