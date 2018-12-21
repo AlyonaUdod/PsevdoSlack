@@ -4,6 +4,10 @@ import App from '../App.js'
 import Login from '../Auth/Login'
 import Registration from '../Auth/Registration'
 import firebase from '../firebase'
+import {connect} from 'react-redux'
+import {setUser} from '../redux/actions/setUserAction'
+import Spinner from '../Spinner/Spinner.jsx';
+
 
 
  class Root extends Component {
@@ -12,6 +16,7 @@ import firebase from '../firebase'
     firebase.auth().onAuthStateChanged(user => {
       if(user) {
         console.log(user);
+        this.props.setUser(user);
         this.props.history.push('/')
       }
     })
@@ -19,17 +24,32 @@ import firebase from '../firebase'
 
   render() {
     return (
-      <div>
+     this.props.isLoading ? <Spinner/> : 
         <Switch>
           <Route exact path='/' component={App}/>
           <Route path='/login' component={Login}/>
           <Route path='/registration' component={Registration}/>
         </Switch>
-      </div>
     )
   }
 }
 
-export default withRouter(Root)
+function MSTP (state) {
+  return {
+    isLoading: state.user.isLoading,
+  }
+}
+
+function MDTP (dispatch) {
+  return {
+    setUser: function(user) {
+      dispatch(setUser(user))
+    }
+  }
+}
+
+
+
+export default withRouter(connect(MSTP, MDTP)(Root))
 
 // withRouter - HOC, принимает аргуементом компонент и дает доступ к истории браузера этого объекта.

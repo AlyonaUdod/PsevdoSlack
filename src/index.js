@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom'
+import {Provider} from 'react-redux';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Root from './Root/Root';
 import 'semantic-ui-css/semantic.min.css'
+import store from './redux/store/store'
 
-ReactDOM.render(<BrowserRouter>
-                    <Root/>
-                </BrowserRouter>, document.getElementById('root'));
+ReactDOM.render(<Provider store={store}>
+                    <BrowserRouter>
+                        <Root/>
+                    </BrowserRouter>
+                </Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
