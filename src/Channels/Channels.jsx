@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Menu, Icon, Modal, Segment, Button, Form} from 'semantic-ui-react';
 import firebase from '../firebase'
 import {connect} from 'react-redux'
+import {setCurrentChannel} from '../redux/actions/setCurrentChannelAction'
 
 class Channels extends Component {
 
@@ -10,7 +11,9 @@ class Channels extends Component {
         modal: false,
         channel: '',
         about: '',
-        channelsRef: firebase.database().ref('channels')
+        channelsRef: firebase.database().ref('channels'),
+        activeChannel: '',
+        firstLoad: true,
       }
 
       componentDidMount () {
@@ -59,6 +62,7 @@ class Channels extends Component {
             this.setState({
                 channel: '',
                 about: '',
+                active: false,
             })
             this.toggleModal()
             console.log('channel added')
@@ -73,8 +77,33 @@ class Channels extends Component {
             console.log(loadedChannels);
             this.setState({
                 channels: loadedChannels
-            })
+            }, () => (this.loadFirstChannel()))
         })
+
+        console.log(this.state.channels)
+
+        // this.props.setChannelToStore(this.state.channels[0])
+      }
+    
+      loadFirstChannel = () => {
+          if(this.state.firstLoad && this.state.channels.length > 0) {
+            this.props.setChannelToStore(this.state.channels[0]);
+            this.showActiveChannel(this.state.channels[0])
+          }
+          this.setState ({
+              firstLoad: false,
+          })
+      }
+
+      showActiveChannel = (channel) => {
+        this.setState({
+            activeChannel: channel.id
+        })
+      }
+
+      changeActiveChannel = (el) => {
+        this.props.setChannelToStore(el);
+        this.showActiveChannel(el) 
       }
 
 
@@ -93,6 +122,8 @@ class Channels extends Component {
                     key={el.id}
                     name={el.name}
                     style={{opacity:.7}}
+                    active = {el.id === this.state.activeChannel}
+                    onClick={() => this.changeActiveChannel(el)}
                     >
                     # {el.name}
                     </Menu.Item>
@@ -144,8 +175,17 @@ class Channels extends Component {
 function MSTP (state) {
     return {
       user: state.user.currentUser,
+      channel: state.channel
     }
   }
 
+function MDTP (dispatch) {
+    return {
+        setChannelToStore: function(data) {
+            dispatch(setCurrentChannel(data))
+        }
+    }
+}
 
-export default connect(MSTP, null)(Channels)
+
+export default connect(MSTP, MDTP)(Channels)
