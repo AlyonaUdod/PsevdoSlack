@@ -20,6 +20,15 @@ class Channels extends Component {
           this.addListeners()
       }
 
+      componentWillUnmount () {
+        this.removeListeners()
+      }
+
+      removeListeners = () => {
+        this.state.channelsRef.off();
+      }
+
+
       handlerChange = (e) => {
         this.setState({
           [e.target.name]: e.target.value,
@@ -105,6 +114,8 @@ class Channels extends Component {
         this.props.setChannelToStore(el);
         this.showActiveChannel(el) 
       }
+
+      
 
 
   render() {
