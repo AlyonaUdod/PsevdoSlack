@@ -3,21 +3,46 @@ import MessageHeader from '../MessageHeader/MessageHeader'
 import { Segment, Comment } from 'semantic-ui-react';
 import MessageForm from '../MessageForm/MessageForm';
 import firebase from '../firebase'
+import {connect} from 'react-redux'
+import SingleMessage from '../SingleMessage/SingleMessage';
 
-export default class Message extends Component {
+class Message extends Component {
 
   state = {
-    messagesRef: firebase.database().ref('messages')
+    messagesRef: firebase.database().ref('messages'),
+    loading: true,
+    messages: []
   }
-  
+
+  componentDidMount () {
+    setTimeout(() => {
+      const {currentChannel, currentUser} = this.props;
+      if (currentChannel && currentUser) {
+        this.addListeners(currentChannel.id)
+      }
+    }, 1000)
+  }
+
+  addListeners = channelId => {
+    let loadedMessages = [];
+    this.state.messagesRef.child(channelId).on('child_added', snap => {
+      loadedMessages.push(snap.val())
+      this.setState({
+        messages: loadedMessages,
+        loading: false,
+      })
+    })
+  }
+
 
   render() {
-    const {messagesRef} = this.state;
+    const {messagesRef, messages} = this.state;
     return (
         <React.Fragment>
            <MessageHeader/>
            <Segment>
              <Comment.Group className='messages'>
+             { messages.length > 0 && messages.map(el => <SingleMessage key={el.time} message={el} user={el.user}/>)}
              </Comment.Group>
            </Segment>
            <MessageForm messagesRef={messagesRef}/>
@@ -25,3 +50,13 @@ export default class Message extends Component {
     )
   }
 }
+
+function MSTP (state) {
+  return {
+    currentChannel: state.channel,
+    currentUser: state.user.currentUser,
+  }
+}
+
+
+export default connect(MSTP)(Message)
