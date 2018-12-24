@@ -27,7 +27,7 @@ class MessageForm extends Component {
                 avatar: this.props.currentUser.photoURL,
             }
         }
-        console.log(message)
+        // console.log(message)
         return message
     }
 
@@ -70,7 +70,7 @@ class MessageForm extends Component {
             onChange={this.handleChange}/>
         <Button.Group icon widths='2'>
             <Button color='orange' content='Add Reply' labelPosition='left' icon='edit' onClick={this.sendMessage} />
-            <Button color='teal' content='Upload media' labelPosition='right' icon='cloud upload'/>
+            <Button color='teal' content='Upload media' labelPosition='right' icon='cloud upload' onClick={this.props.toggleModal}/>
         </Button.Group>
       </Segment>
     )

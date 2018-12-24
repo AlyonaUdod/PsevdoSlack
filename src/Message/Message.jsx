@@ -5,13 +5,15 @@ import MessageForm from '../MessageForm/MessageForm';
 import firebase from '../firebase'
 import {connect} from 'react-redux'
 import SingleMessage from '../SingleMessage/SingleMessage';
+import FileModal from '../FileModal/FileModal';
 
 class Message extends Component {
 
   state = {
     messagesRef: firebase.database().ref('messages'),
     loading: true,
-    messages: []
+    messages: [],
+    modal: false,
   }
 
   componentDidMount () {
@@ -34,9 +36,14 @@ class Message extends Component {
     })
   }
 
+  toggleModal = () => {
+    this.setState(prev => ({
+      modal: !prev.modal
+    }))
+  }
 
   render() {
-    const {messagesRef, messages} = this.state;
+    const {messagesRef, messages, modal} = this.state;
     return (
         <React.Fragment>
            <MessageHeader/>
@@ -45,7 +52,8 @@ class Message extends Component {
              { messages.length > 0 && messages.map(el => <SingleMessage key={el.time} message={el} user={el.user}/>)}
              </Comment.Group>
            </Segment>
-           <MessageForm messagesRef={messagesRef}/>
+           <MessageForm messagesRef={messagesRef} toggleModal={this.toggleModal}/>
+           <FileModal modal={modal} closeModal={this.toggleModal}/>
         </React.Fragment>
     )
   }
