@@ -13,6 +13,10 @@ class Channels extends Component {
         channelsRef: firebase.database().ref('channels')
       }
 
+      componentDidMount () {
+          this.addListeners()
+      }
+
       handlerChange = (e) => {
         this.setState({
           [e.target.name]: e.target.value,
@@ -28,13 +32,9 @@ class Channels extends Component {
       handlerSubmit = (e) => {
         e.preventDefault()
         if (this.state.channel && this.state.about) {
-            console.log('succses')
+            // console.log('succses')
             this.addChannel()
-        }
-        // this.setState(prev=>({
-        //     channels: [...prev.channels, {channel: this.state.channel, about: this.state.about}], 
-        //     modal: !prev.modal,
-        // }))
+        } 
       }
 
       addChannel = () => {
@@ -66,6 +66,17 @@ class Channels extends Component {
         .catch(err=> console.log(err))
       }
 
+      addListeners = () => {
+        let loadedChannels = []
+        this.state.channelsRef.on('child_added', snap => {
+            loadedChannels.push(snap.val())
+            console.log(loadedChannels);
+            this.setState({
+                channels: loadedChannels
+            })
+        })
+      }
+
 
   render() {
       const { channels, modal } = this.state
@@ -77,6 +88,15 @@ class Channels extends Component {
                         <Icon name='exchange'/> CHANNELS
                     </span> ({channels.length}) <Icon name='add' onClick={this.toggleModal}/>
                 </Menu.Item>
+                {channels.length > 0 && channels.map(el => (
+                    <Menu.Item 
+                    key={el.id}
+                    name={el.name}
+                    style={{opacity:.7}}
+                    >
+                    # {el.name}
+                    </Menu.Item>
+                ))}
             </Menu.Menu>
 
 
