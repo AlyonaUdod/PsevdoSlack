@@ -27,8 +27,7 @@ class MessageHeader extends Component {
         </Header.Subheader>
         </Header>
         <Header floated='right'>
-        <Input size='mini' icon='search' name='SeachTerm' placeholder='Search'/>
-
+          <Input size='mini' icon='search' name='SeachTerm' placeholder='Search' value={this.props.seachTemp} onChange={this.props.seachTempChange}/>
         </Header>
       </Segment>
     )

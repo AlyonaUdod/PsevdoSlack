@@ -12,7 +12,24 @@ class Message extends Component {
     messagesRef: firebase.database().ref('messages'),
     loading: true,
     messages: [],
+    seachMsg: [],
     countUser: '',
+    seachTemp: '',
+  }
+  
+  seachTempChange = (e) => {
+    let value = e.target.value 
+    this.setState({
+      seachTemp: value.toLowerCase(),
+    }, () => this.seachMessege() )
+  }
+
+  seachMessege = () => {
+    let arr = this.state.messages.filter(el => el.content ? el.content.toLowerCase().includes(this.state.seachTemp) : null)
+    console.log(arr)
+    this.setState({
+      seachMsg: arr,
+    })
   }
 
   componentDidMount () {
@@ -42,21 +59,21 @@ class Message extends Component {
       }
       return acc
     }, []) 
-
     this.setState({
       countUser: `${iniqueUsers.length} users`
     })
   }
 
-
   render() {
-    const {messagesRef, messages, countUser} = this.state;
+    const {messagesRef, messages, countUser, seachTemp, seachMsg} = this.state;
     return (
         <React.Fragment>
-           <MessageHeader countUser={countUser}/>
+           <MessageHeader countUser={countUser} seachTemp={seachTemp} seachTempChange={this.seachTempChange}/>
            <Segment>
              <Comment.Group className='messages'>
-             { messages.length > 0 && messages.map(el => <SingleMessage key={el.time} message={el} user={el.user}/>)}
+             { messages.length > 0 && !seachTemp && messages.map(el => <SingleMessage key={el.time} message={el} user={this.props.currentUser}/>)}
+             { seachTemp && seachMsg.map(el => <SingleMessage key={el.time} message={el} user={this.props.currentUser}/>)} 
+             { seachTemp && seachMsg.length === 0 && <div style={{fontSize:'1.3rem'}}># No message found</div>}
              </Comment.Group>
            </Segment>
            <MessageForm messagesRef={messagesRef} toggleModal={this.toggleModal}/>

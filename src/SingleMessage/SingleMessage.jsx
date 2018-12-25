@@ -1,14 +1,18 @@
 import React from 'react';
 import { Comment, Image } from 'semantic-ui-react';
 import moment from 'moment'
+import {connect} from 'react-redux'
 
 // console.log(this.props.message)
-const isOwnMessage = (message, user) => message.user.id === user.id ? 'message__self' : '';
+const isOwnMessage = (message, user) => message.user.id === user.uid ? 'message__self' : '';
 
 const timeFromNow = time => moment(time).fromNow()
 
 const SingleMessage = ({message, user}) => {
-    // console.log(message.user.id, user.id)
+
+//    console.log(user)
+    // console.log(this.props.currentUser)
+    
     return (
         <Comment>
             <Comment.Avatar src={message.user.avatar}/>
@@ -28,4 +32,10 @@ const SingleMessage = ({message, user}) => {
     );
 };
 
-export default SingleMessage;
+function MSTP (state) {
+    return {
+      currentUser: state.user.currentUser,
+    }
+  }
+
+export default connect(MSTP)(SingleMessage);
