@@ -1,5 +1,5 @@
 import React from 'react';
-import { Comment } from 'semantic-ui-react';
+import { Comment, Image } from 'semantic-ui-react';
 import moment from 'moment'
 
 // console.log(this.props.message)
@@ -8,7 +8,7 @@ const isOwnMessage = (message, user) => message.user.id === user.id ? 'message__
 const timeFromNow = time => moment(time).fromNow()
 
 const SingleMessage = ({message, user}) => {
-    console.log(message)
+    // console.log(message)
     return (
         <Comment>
             <Comment.Avatar src={message.user.avatar}/>
@@ -19,9 +19,10 @@ const SingleMessage = ({message, user}) => {
                 <Comment.Metadata>
                     {timeFromNow(message.time)}
                 </Comment.Metadata>
-                <Comment.Text>
-                    {message.content}
-                </Comment.Text>
+
+                  {message.image && <Image src={message.image} style={{maxWidth: '20%'}} className='message__image'/>} 
+                  {message.content && <Comment.Text> {message.content} </Comment.Text> }
+
             </Comment.Content>
         </Comment>
     );

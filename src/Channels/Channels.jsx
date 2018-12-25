@@ -61,8 +61,8 @@ class Channels extends Component {
                 avatar: this.props.user.photoURL,
             }
         }
-        console.log(this.props.user)
-        console.log(newChannel)
+        // console.log(this.props.user)
+        // console.log(newChannel)
 
         channelsRef
         .child(key)
@@ -83,13 +83,13 @@ class Channels extends Component {
         let loadedChannels = []
         this.state.channelsRef.on('child_added', snap => {
             loadedChannels.push(snap.val())
-            console.log(loadedChannels);
+            // console.log(loadedChannels);
             this.setState({
                 channels: loadedChannels
             }, () => (this.loadFirstChannel()))
         })
 
-        console.log(this.state.channels)
+        // console.log(this.state.channels)
 
         // this.props.setChannelToStore(this.state.channels[0])
       }
