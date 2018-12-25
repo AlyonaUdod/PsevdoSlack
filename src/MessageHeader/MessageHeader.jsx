@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
 import { Segment, Header, Icon, Input } from 'semantic-ui-react';
+import {connect} from 'react-redux'
 
-export default class MessageHeader extends Component {
+class MessageHeader extends Component {
+
+
   render() {
+
+    // console.log(this.props.channel)
+
     return (
       <Segment clearing>
         <Header 
@@ -13,11 +19,11 @@ export default class MessageHeader extends Component {
             marginBottom: 0
         }}>
         <span>
-            Channel
+           {this.props.channel === null ? 'Channel' : this.props.channel.name}&nbsp;
             <Icon name ='star outline' color='black'/>
         </span>
         <Header.Subheader>
-          2 users
+         {this.props.countUser}
         </Header.Subheader>
         </Header>
         <Header floated='right'>
@@ -28,3 +34,13 @@ export default class MessageHeader extends Component {
     )
   }
 }
+
+function MSTP (state) {
+  return {
+    // user: state.user.currentUser,
+    channel: state.channel
+  }
+}
+
+
+export default connect(MSTP) (MessageHeader) 

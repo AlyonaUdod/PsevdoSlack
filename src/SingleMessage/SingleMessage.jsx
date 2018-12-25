@@ -8,7 +8,7 @@ const isOwnMessage = (message, user) => message.user.id === user.id ? 'message__
 const timeFromNow = time => moment(time).fromNow()
 
 const SingleMessage = ({message, user}) => {
-    // console.log(message)
+    // console.log(message.user.id, user.id)
     return (
         <Comment>
             <Comment.Avatar src={message.user.avatar}/>
