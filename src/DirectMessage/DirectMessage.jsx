@@ -7,7 +7,9 @@ class DirectMessage extends Component {
 
     state = {
         users: [],
-        usersRef: firebase.database().ref('users')
+        usersRef: firebase.database().ref('users'),
+        onlineRef: firebase.database().ref('onlineUsers'),
+        connectedRef: firebase.database().ref('.info/connected')
     }
 
     componentDidMount() {
@@ -29,6 +31,38 @@ class DirectMessage extends Component {
                 })
             }
         })
+        this.state.connectedRef.on('value', snap => {
+            if (snap.val()) {
+                const ref = this.state.onlineRef.child(id);
+                ref.set(true);
+                ref.onDisconnect().remove(err => {
+                    if(err !== null) {
+                        console.log(err)
+                    }
+                })
+            }
+        })
+        this.state.onlineRef.on('child_added', snap => {
+            if(id !== snap.key) {
+                this.setUserStatus(snap.key)
+            }
+        })
+        this.state.onlineRef.on('child_removed', snap => {
+            if(id !== snap.key) {
+                this.setUserStatus(snap.key, false);
+            }
+        })
+    }
+
+    setUserStatus = (id, status=true) => {
+        const updateUser = this.state.users.map( el => {
+            if(el.uid === id) {
+                el.status = `${status ? 'online' : 'offline'}`
+            }
+        })
+        this.setState({
+            users: updateUser
+        })
     }
 
   render() {
@@ -40,12 +74,12 @@ class DirectMessage extends Component {
                 <Icon name='mail'/> DIRECT MESSAGES 
             </span> ({users.length})
         </Menu.Item>
-        {users.map(el => <Menu.Item
-        key={el.uid}
-        onClick={() => console.log('lll')}
-        style={{opacity:.7, fontStyle:'italic'}}
-        >
-        <Icon name='circle'/>
+        {users.length > 0 && users.map(el => <Menu.Item
+            key={el.uid}
+            onClick={() => console.log('lll')}
+            style={{opacity:.7, fontStyle:'italic'}}
+            >
+        <Icon name='circle' color={el.status === 'online' ? 'green' : 'grey'}/>
         @ {el.name}
         </Menu.Item>)}
      </Menu.Menu>
