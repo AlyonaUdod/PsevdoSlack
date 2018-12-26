@@ -54,12 +54,22 @@ class Message extends Component {
   addListeners = channelId => {
     let loadedMessages = [];
 
-    // this.state.messagesRef.child(channelId).on('value', snap => console.log(snap.exists()))
-
+    let a 
     this.state.messagesRef.child(channelId).on('value', snap => {
-      if (snap.exists()) {
+      if(snap.exists()) {
+        console.log(snap.exists())
+        return a = true
+      } else  {
+        return a = false
+      }
+      })
+   
+    console.log('this a =>', a)
+
+    
+      if (a) {
         this.state.messagesRef.child(channelId).on('child_added', snap => {
-            // console.log('aaaaa')
+            console.log('aaaaa = true')
             loadedMessages.push(snap.val())
             this.setState({
               messages: loadedMessages,
@@ -72,7 +82,7 @@ class Message extends Component {
               loading: false,
             }, () => this.countUnicUsers(this.state.messages))
       } 
-    })
+
 
 
     // this.state.messagesRef.child(channelId).on('child_added', snap => {
