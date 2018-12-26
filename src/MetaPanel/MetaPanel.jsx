@@ -50,7 +50,7 @@ class MetaPanel extends Component {
            onClick={this.setActiveIndex}
           >
             <Icon name='dropdown'/>
-            <Icon name='pensil alternate'/>
+            <Icon name='pencil alternate'/>
             Created by
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 1}>

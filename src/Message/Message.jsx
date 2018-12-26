@@ -15,6 +15,7 @@ class Message extends Component {
     seachMsg: [],
     countUser: '',
     seachTemp: '',
+    fullMsg: false,
   }
   
   seachTempChange = (e) => {
@@ -36,7 +37,7 @@ class Message extends Component {
     setTimeout(() => {
       const {currentChannel, currentUser} = this.props;
       if (currentChannel && currentUser) {
-        this.addListeners(currentChannel.id)
+        this.check(currentChannel.id)
       }
     }, 1000)
   }
@@ -46,57 +47,33 @@ class Message extends Component {
       // (console.log('new one'))
         if (prevProps.currentChannel.name !== this.props.currentChannel.name) {
           // (console.log('second one'))
-          this.addListeners(this.props.currentChannel.id)
+          this.check(this.props.currentChannel.id)
         }
     }
   }
 
-  addListeners = channelId => {
-    let loadedMessages = [];
-
-    let a 
+  check = (channelId) => { 
     this.state.messagesRef.child(channelId).on('value', snap => {
-      if(snap.exists()) {
-        console.log(snap.exists())
-        return a = true
-      } else  {
-        return a = false
-      }
-      })
-   
-    console.log('this a =>', a)
-
-    
-      if (a) {
-        this.state.messagesRef.child(channelId).on('child_added', snap => {
-            console.log('aaaaa = true')
-            loadedMessages.push(snap.val())
-            this.setState({
-              messages: loadedMessages,
-              loading: false,
-            }, () => this.countUnicUsers(this.state.messages))
-          })
-      } else {
+        if(snap.exists()) {
+          this.addListeners(channelId)
+          }
+        })
+    this.setState({
+        messages: [],
+        loading: false,
+    }, () => this.countUnicUsers(this.state.messages))
+  }
+ 
+  addListeners = (channelId) => {
+    let loadedMessages = []; 
+    this.state.messagesRef.child(channelId).on('child_added', snap => {
+        console.log('aaaaa = true')
+        loadedMessages.push(snap.val())
         this.setState({
-              messages: [],
-              loading: false,
-            }, () => this.countUnicUsers(this.state.messages))
-      } 
-
-
-
-    // this.state.messagesRef.child(channelId).on('child_added', snap => {
-    //   console.log('aaaaa')
-    //   loadedMessages.push(snap.val())
-    //   this.setState({
-    //     messages: loadedMessages,
-    //     loading: false,
-    //   }, () => this.countUnicUsers(this.state.messages))
-    // })
-    // :  this.setState({
-    //     messages: [],
-    //     loading: false,
-    //   }, () => this.countUnicUsers(this.state.messages))
+          messages: loadedMessages,
+          loading: false,
+        }, () => this.countUnicUsers(this.state.messages))
+      })
   }
 
   countUnicUsers = messages => {
