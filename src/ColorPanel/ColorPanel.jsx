@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import firebase from '../firebase'
 import {connect} from 'react-redux'
 import { Sidebar, Divider, Button, Menu, Modal, Segment, Label, Icon } from 'semantic-ui-react';
-import {TwitterPicker} from 'react-color'
+import {SketchPicker} from 'react-color'
+import {setColors} from '../redux/actions/setColorsAction'
 
 class ColorPanel extends Component {
 
@@ -10,7 +11,22 @@ class ColorPanel extends Component {
     modal: false,
     primary: '',
     secondary: '',
-    userRef: firebase.database().ref('user'),
+    userRef: firebase.database().ref('users'),
+    userColors: [],
+  }
+
+  componentDidMount () {
+    if (this.props.currentUser) {
+      this.addListener(this.props.currentUser.uid)
+    }
+  }
+
+  addListener = userId => {
+    let userColors = [];
+    this.state.userRef.child(`${userId}/colors`).on('child_added', snap => {
+      userColors.unshift(snap.val());
+      this.setState({userColors});
+    })
   }
 
   openModal = () => this.setState({modal: true})
@@ -46,8 +62,29 @@ class ColorPanel extends Component {
     .catch(err => console.log(err))
   }
 
+  displayColors = colors => 
+    // console.log(colors)
+    colors.length > 0 &&
+    colors.map((el,i) => (
+      <React.Fragment key={i}>
+        <Divider/>
+          <div
+            className='color__container'
+            onClick={() => this.props.setColors(el.primary, el.secondary)}
+          > 
+            <div className='color__square' style={{background: el.primary}}>
+              <div 
+                className='color__overlay'
+                style={{background: el.secondary}}
+              />
+            </div>
+          </div>
+      </React.Fragment>
+    ))
+  
+
   render() {
-    const {modal, primary, secondary} = this.state
+    const {modal, primary, secondary, userColors} = this.state
     return (
       <Sidebar
         as={Menu}
@@ -58,17 +95,17 @@ class ColorPanel extends Component {
         width='very thin'>
         <Divider/>
           <Button icon='add' size='small' color='blue' onClick={this.openModal}/>
-
+          {this.displayColors(userColors)}
           <Modal basic open={modal} onClose={this.closeModal}>
             <Modal.Header>Choose App Colors</Modal.Header>
             <Modal.Content>
               <Segment>
                 <Label content='Primary Color'/>
-                <TwitterPicker onChange={this.handleChangePrimaryColor} color={primary}/>
+                <SketchPicker onChange={this.handleChangePrimaryColor} color={primary}/>
               </Segment>
               <Segment>
                 <Label content='Secondary Color'/>
-                <TwitterPicker onChange={this.handleChangeSecondaryColor} color={secondary}/>
+                <SketchPicker onChange={this.handleChangeSecondaryColor} color={secondary}/>
               </Segment>
             </Modal.Content>
             <Modal.Actions>
@@ -85,11 +122,18 @@ class ColorPanel extends Component {
   }
 }
 
-function MSTP (state) {
+const MSTP = state => {
   return {
-    // currentChannel: state.channel,
     currentUser: state.user.currentUser,
   }
 }
 
-export default connect(MSTP)(ColorPanel)
+const MDTP = (dispatch) => {
+  return {
+    setColors: function(a, b){
+      dispatch(setColors(a, b))
+    }
+  }
+} 
+
+export default connect(MSTP, MDTP)(ColorPanel)

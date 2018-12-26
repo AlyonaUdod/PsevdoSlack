@@ -24,7 +24,7 @@ class MetaPanel extends Component {
         return null
       }
     }
-
+    
     return (
      <Segment>
        <Header as='h3' attached='top'>

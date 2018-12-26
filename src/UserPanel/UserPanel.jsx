@@ -37,7 +37,7 @@ class UserPanel extends Component {
     console.log(this.props.user)
     return (
         <Grid style={{
-            background: '4c3c4c'
+            background: `${this.props.primaryColor}`
         }}>
             <Grid.Column>
                 <Grid.Row
@@ -67,6 +67,7 @@ class UserPanel extends Component {
 function MSTP (state) {
     return {
       user: state.user,
+      primaryColor: state.colors.primaryColor
     }
   }
 
