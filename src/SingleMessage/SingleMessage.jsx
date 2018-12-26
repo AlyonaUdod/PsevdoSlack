@@ -10,12 +10,12 @@ const timeFromNow = time => moment(time).fromNow()
 
 const SingleMessage = ({message, user}) => {
 
-//    console.log(user)
+    //    console.log(user)
     // console.log(this.props.currentUser)
     
     return (
         <Comment>
-            <Comment.Avatar src={message.user.avatar}/>
+            <Comment.Avatar src={message.user.id === user.uid ? user.photoURL : message.user.avatar}/>
             <Comment.Content className={isOwnMessage(message, user)}>
                 <Comment.Author as='a'>
                     {message.user.name}

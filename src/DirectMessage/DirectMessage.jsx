@@ -19,7 +19,15 @@ class DirectMessage extends Component {
         }
     }
 
+    // componentDidUpdate() {
+    //     if (this.props.user) {
+    //         this.addListener(this.props.user.uid)
+    //     }
+    // }
+
+
     addListener = id => {
+        console.log('hello', id)
         let loadedUsers = [];
         this.state.usersRef.on('child_added',snap => {   // snap = объект огромный, который нам прилетает после on.
             if(id !== snap.key) {
