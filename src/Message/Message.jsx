@@ -51,30 +51,6 @@ class Message extends Component {
     }
   }
 
-  // checkMsg = (channelId) => { 
-  //   this.state.messagesRef.child(channelId).on('value', snap => {
-  //       if(snap.exists()) {
-  //         this.addListeners(channelId)
-  //         }
-  //       })
-  //   this.setState({
-  //       messages: [],
-  //       loading: false,
-  //   }, () => this.countUnicUsers(this.state.messages))
-  // }
- 
-  // addListeners = (channelId) => {
-  //   let loadedMessages = []; 
-  //   this.state.messagesRef.child(channelId).on('child_added', snap => {
-  //       console.log('aaaaa = true')
-  //       loadedMessages.push(snap.val())
-  //       this.setState({
-  //         messages: loadedMessages,
-  //         loading: false,
-  //       }, () => this.countUnicUsers(this.state.messages))
-  //     })
-  // }
-
   addListeners = (channelId) => {
     let loadedMessages = [];
 

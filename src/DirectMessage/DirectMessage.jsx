@@ -120,3 +120,14 @@ function MSTP (state) {
 }
 
 export default connect(MSTP, {setCurrentChannel, setPrivateChannel})(DirectMessage)
+
+
+
+
+
+
+
+
+
+
+
